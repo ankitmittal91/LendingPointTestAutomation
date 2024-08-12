@@ -4,6 +4,15 @@
 	<listeners>
   		<listener class-name="LendingPointTestAutomation.utility.ListenerClass"></listener>
   	</listeners>
- 	 <test thread-count="5" name="Test">
- 	 </test> <!-- Test -->
+  <test thread-count="5" name="Smoke">
+  <groups>
+  <run>
+  <include name="Smoke">
+  </include>
+  </run>
+  </groups>
+    <classes>
+      <class name="LendingPointTestAutomation.applyOldUITests.OldApplyPageTests"/>
+    </classes>
+  </test> <!-- Test -->
 </suite> <!-- Suite -->

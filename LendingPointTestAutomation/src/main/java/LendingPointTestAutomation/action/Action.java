@@ -1,11 +1,12 @@
 
-package com.TestAutomation.Actions;
+package LendingPointTestAutomation.action;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
@@ -19,15 +20,24 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.TestAutomation.baseClass.BaseClass;
 
-public class Action extends BaseClass {
+public class Action extends LendingPointTestAutomation.baseClass.BaseClass {
+	
+	public static void enterTextByCharacter(WebElement ele, String text, int i) {
+		//Provide a extra character at start of the string depending on the UI field implementation
+		for(int j=i; j<text.length(); j++) {
+			char c = text.charAt(j);
+			String s = new StringBuilder().append(c).toString();
+			ele.sendKeys(s);
+		}
+	}
 
 	public static void scrollByVisibilityOfElement(WebDriver driver, WebElement ele) {
 		JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -98,7 +108,7 @@ public class Action extends BaseClass {
 		return flag;
 	}
 
-	public boolean isEnabled(WebDriver driver, WebElement ele) {
+	public static boolean isEnabled(WebDriver driver, WebElement ele) {
 		boolean flag = false;
 		flag = findElement(driver, ele);
 		if (flag) {
@@ -139,7 +149,7 @@ public class Action extends BaseClass {
 		return flag;
 	}
 
-	public boolean selectBySendkeys(String value,WebElement ele) {
+	public static boolean selectBySendkeys(String value,WebElement ele) {
 		boolean flag = false;
 		try {
 			ele.sendKeys(value);
@@ -708,6 +718,18 @@ public class Action extends BaseClass {
 	    }
 	}
 	
+	public static void fluentWaitTillExists(WebDriver driver,WebElement element, int timeOut) {
+	    Wait<WebDriver> wait = null;
+	    try {
+	        wait = new FluentWait<WebDriver>((WebDriver) driver)
+	        		.withTimeout(Duration.ofSeconds(20))
+	        	    .pollingEvery(Duration.ofSeconds(2))
+	        	    .ignoring(NoSuchElementException.class);
+	        wait.until(ExpectedConditions.presenceOfElementLocated((By) element));
+	    }catch(Exception e) {
+	    }
+	}
+	
 	@SuppressWarnings("deprecation")
 	public static void implicitWait(WebDriver driver, int timeOut) throws InterruptedException {
 		driver.manage().timeouts().implicitlyWait(timeOut, TimeUnit.SECONDS);
@@ -725,10 +747,12 @@ public class Action extends BaseClass {
 	
 	public String screenShot(WebDriver driver, String filename) {
 		String dateName = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
-		TakesScreenshot takesScreenshot = (TakesScreenshot) driver;
+		//WebDriver augmentedDriver = new Augmenter().augment(driver);
+	   // File source = ((TakesScreenshot)augmentedDriver).getScreenshotAs(OutputType.FILE);
+		TakesScreenshot takesScreenshot = (TakesScreenshot)driver;
 		File source = takesScreenshot.getScreenshotAs(OutputType.FILE);
-		String destination = System.getProperty("user.dir") + "\\ScreenShots\\" + filename + "_" + dateName + ".png";
-
+		//String destination = System.getProperty("user.dir") + "\\Screenshots\\" + filename + "_" + dateName + ".png";
+		String destination = "C:\\Users\\ankit.mittal\\eclipse-workspace\\LendingPointTestAutomation\\Screenshots\\" + filename + "_" + dateName + ".png";
 		try {
 			FileUtils.copyFile(source, new File(destination));
 		} catch (Exception e) {
